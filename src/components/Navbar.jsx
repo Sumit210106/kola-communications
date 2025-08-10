@@ -10,6 +10,7 @@ const Navbar = () => {
     { label: "Blog", href: "#services" },
     { label: "About Us", href: "#plans" },
     { label: "Contact", href: "#contact" },
+    { label: "Portfolio", href: "#portfolio" },
   ];
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
