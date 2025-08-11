@@ -1,19 +1,50 @@
 import React, { useState } from "react";
 import { Menu, X, ArrowRight } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const navLinks = [
-    { label: "Our Services", href: "#process" },
-    { label: "Blog", href: "#services" },
-    { label: "About Us", href: "#plans" },
-    { label: "Contact", href: "#contact" },
-    { label: "Portfolio", href: "#portfolio" },
+    { label: "Our Services", path: "/", id: "services" }, // scroll to services section on home
+    { label: "Blog", path: "/", id: "blog" },             // scroll to blog section on home
+    { label: "About Us", path: "/about", id: null },      // open AboutUs page
+    { label: "Contact", path: "/", id: "contact" },       // scroll to contact section on home
+    { label: "Portfolio", path: "/", id: "portfolio" },   // scroll to portfolio section on home
   ];
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const handleNavClick = (e, path, id) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+
+    if (location.pathname !== path) {
+      // Navigate to the correct page, then scroll after navigation
+      navigate(path);
+
+      // Wait for navigation, then scroll to section (for home page)
+      if (id) {
+        setTimeout(() => {
+          const section = document.getElementById(id);
+          if (section) {
+            section.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100); // Adjust timeout if needed
+      }
+    } else {
+      // Already on the correct page
+      if (id) {
+        const section = document.getElementById(id);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
+  };
 
   return (
     <nav
@@ -35,25 +66,26 @@ const Navbar = () => {
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-8">
-          {navLinks.map(({ label, href }) => (
-            <a
-              href={href}
+          {navLinks.map(({ label, path, id }) => (
+            <Link
+              to={path + (id ? `#${id}` : "")}
               key={label}
               className="relative text-white/90 text-sm font-medium transition-colors duration-200
                  hover:text-white after:content-[''] after:absolute after:left-0 after:-bottom-1 
                  after:w-0 after:h-[2px] after:bg-[#6953F5] after:transition-all after:duration-300
                  hover:after:w-full"
+              onClick={e => handleNavClick(e, path, id)}
             >
               {label}
-            </a>
+            </Link>
           ))}
         </div>
 
         {/* Desktop CTA */}
         <div className="hidden lg:block">
-<button
-  className="w-full bg-gradient-to-r from-[#3D44C3] to-[#2C349E] hover:from-[#595ED2] hover:to-[#232B7D] text-white px-6 py-3 rounded-xl font-medium text-base transition-all duration-300 shadow-lg flex items-center justify-center gap-2 group"
->
+          <button
+            className="w-full bg-gradient-to-r from-[#3D44C3] to-[#2C349E] hover:from-[#595ED2] hover:to-[#232B7D] text-white px-6 py-3 rounded-xl font-medium text-base transition-all duration-300 shadow-lg flex items-center justify-center gap-2 group"
+          >
             <span>Get in touch</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 duration-200" />
           </button>
@@ -86,22 +118,22 @@ const Navbar = () => {
       `}
       >
         <div className="space-y-2">
-          {navLinks.map(({ label, href }) => (
-            <a
-              href={href}
+          {navLinks.map(({ label, path, id }) => (
+            <Link
+              to={path + (id ? `#${id}` : "")}
               key={label}
               className="block text-white/90 hover:text-white duration-200 text-base font-medium py-3 pl-4 border border-white/20 rounded-2xl"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={e => handleNavClick(e, path, id)}
             >
               {label}
-            </a>
+            </Link>
           ))}
         </div>
         <div className="mt-4">
-<button
-  className="w-full bg-gradient-to-r from-[#3D44C3] to-[#2C349E] hover:from-[#595ED2] hover:to-[#232B7D] text-white px-6 py-3 rounded-xl font-medium text-base transition-all duration-300 shadow-lg flex items-center justify-center gap-2 group"
->
- <span>Get in touch</span>
+          <button
+            className="w-full bg-gradient-to-r from-[#3D44C3] to-[#2C349E] hover:from-[#595ED2] hover:to-[#232B7D] text-white px-6 py-3 rounded-xl font-medium text-base transition-all duration-300 shadow-lg flex items-center justify-center gap-2 group"
+          >
+            <span>Get in touch</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 duration-200" />
           </button>
         </div>
