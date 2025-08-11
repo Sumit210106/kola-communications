@@ -65,7 +65,7 @@ const Footer = () => {
           <div className="space-y-6">
             <div className="flex items-center space-x-4">
               <div className="relative">
-                <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center bg-white">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-white">
                   <img
                     src={logo}
                     alt="kola communications"

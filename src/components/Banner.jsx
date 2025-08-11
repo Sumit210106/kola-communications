@@ -10,11 +10,49 @@ import {
   BarChart3,
   Lock,
 } from "lucide-react";
+import { motion } from "framer-motion";
+
+const typewriterWords = [
+  "Creative Digital Solution",
+  "Brand Experiences",
+  "Marketing Strategies",
+  "Web Development",
+  "Growth Campaigns",
+];
+
+function useTypewriter(words, speed = 80, pause = 1200) {
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    if (subIndex === words[index].length + 1 && !deleting) {
+      const timeout = setTimeout(() => setDeleting(true), pause);
+      return () => clearTimeout(timeout);
+    }
+    if (subIndex === 0 && deleting) {
+      setDeleting(false);
+      setIndex((prev) => (prev + 1) % words.length);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setSubIndex((prev) =>
+        deleting ? prev - 1 : prev + 1
+      );
+    }, deleting ? speed / 2 : speed);
+
+    return () => clearTimeout(timeout);
+  }, [subIndex, deleting, index, words, speed, pause]);
+
+  return words[index].substring(0, subIndex);
+}
 
 export default function Banner() {
   const [isVisible, setIsVisible] = useState(false);
   const [activeOrb, setActiveOrb] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const typedText = useTypewriter(typewriterWords);
 
   useEffect(() => {
     setIsVisible(true);
@@ -152,7 +190,7 @@ export default function Banner() {
                   <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500/80 rounded-full" />
                 </div>
                 <div className="flex-1 text-center">
-                  <div className="text-xs sm:text-sm text-[#3D44C3] font-mono hidden sm:block">
+                  <div className="text-xs sm:text-sm text-gray-500 font-mono hidden sm:block">
                     kola Communications .
                   </div>
                 </div>
@@ -262,15 +300,28 @@ export default function Banner() {
 
         {/* Right Section */}
         <div className="lg:w-1/2 flex flex-col items-center lg:items-start lg:pl-20">
-          {/* Heading */}
+          {/* Heading with typewriter effect */}
           <h1
             className={`text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-white mb-6 sm:mb-8 leading-tight max-w-6xl px-4 lg:px-0 transition-all duration-1000 delay-300 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            Creative{" "}
             <span className="bg-gradient-to-r from-[#3D44C3] to-[#2C349E] bg-clip-text text-transparent">
-              Digital Solutions
+              <motion.span
+                key={typedText.length > 0 ? typedText : "typewriter-placeholder"}
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+                className="inline-block"
+                style={{
+                  color: typedText.length > 0 ? "inherit" : "transparent",
+                  WebkitTextFillColor: typedText.length > 0 ? "inherit" : "transparent",
+                }}
+              >
+                {/* Always show at least one character for color */}
+                {typedText.length > 0 ? typedText : "\u00A0"}
+                <span className="animate-pulse text-[#3D44C3]">|</span>
+              </motion.span>
             </span>
           </h1>
 
